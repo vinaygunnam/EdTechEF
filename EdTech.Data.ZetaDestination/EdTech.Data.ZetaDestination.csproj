@@ -93,6 +93,7 @@
     <Compile Include="Region.cs">
       <DependentUpon>NWDestinationModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Repositories\CategoryRepository.cs" />
     <Compile Include="Shipper.cs">
       <DependentUpon>NWDestinationModel.tt</DependentUpon>
     </Compile>
