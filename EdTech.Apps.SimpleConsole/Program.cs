@@ -18,26 +18,22 @@ namespace EdTech.Apps.SimpleConsole
             {
                 using (var unitOfWorkForDestination = new UnitOfWorkForZeta())
                 {
-                    var mapperConfig = new MapperConfiguration(
-                        cfg =>
-                        {
-                            var configuration
+                    var configuration
                                 = CreateMappingBetweenUnitOfWorkEntityTypes<
                                     EdTech.Data.AlphaSource.Category,
                                     EdTech.Data.ZetaDestination.Category
                                   >(unitOfWorkForSource, unitOfWorkForDestination);
-                            var mapper = configuration.CreateMapper();
+                    var mapper = configuration.CreateMapper();
 
-                            var category = unitOfWorkForSource.CategoryRepository.SelectById(1);
-                            var products = category.Products.ToList();
+                    var categories
+                        = unitOfWorkForSource.CategoryRepository.SelectAll()
+                            .Select(category => mapper.Map<
+                                        EdTech.Data.AlphaSource.Category,
+                                        EdTech.Data.ZetaDestination.Category
+                                      >(category)).ToList();
 
-                            var destCategory = mapper.Map<
-                                    EdTech.Data.AlphaSource.Category,
-                                    EdTech.Data.ZetaDestination.Category
-                                  >(category);
-                            Console.WriteLine("Put a breakpoint before me and inspect categpry and destCategory. Only non-navigation properties must be filled in destCategory");
-                        }
-                    );
+                    unitOfWorkForDestination.CategoryRepository.Upsert(categories);
+                    Console.WriteLine("Upsert complete.");
                 }
             }
         }
